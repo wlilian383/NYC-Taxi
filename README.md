@@ -12,7 +12,7 @@
 (2) 上車地點，因為我們的資料分佈大抵只有在
 A. 曼哈頓區
 B. 機場(John F. Kennedy International Airport) JFK Airport Latitude/Longitude: 40.6441666667, -73.7822222222
-推測在機場上/落車的人，目的都是去/來自曼哈頓，這樣也許會開比較久，要由「經緯度」去取，來做推測是否正確的驗證。
+推測在機場上/落車的人，目的都是去/來自曼哈頓，這樣也許會開比較久，要由「經緯度」去取，來做推測是否正確的 ##驗證。
 
 機場:以機場為中心，取適當距離，範圍內都當做是機場
 
@@ -21,8 +21,10 @@ B. 機場(John F. Kennedy International Airport) JFK Airport Latitude/Longitude:
 
 => 先把尖峰時刻的因素加上去
 現在有個小問題 尖峰時間有分 第一大尖峰 大二大....
-現在有尖峰分布 但是要如何結合至我們認為的速度上呢@@?
+尖峰時間=時速慢??? ##驗證
 依據TLC的統計資料 尖峰的時段是差不多的!!! https://www.quora.com/What-times-are-considered-rush-hour-in-New-York-City
+平日+星期日: 8am, 4pm
+星期六: 12pm, 4pm, 8pm
 
 機場 <-> 曼哈頓地區
 	(情況一)將大尖峰時間的資料取出算平均時速
@@ -37,16 +39,13 @@ B. 機場(John F. Kennedy International Airport) JFK Airport Latitude/Longitude:
 
 
 (4) 或取平均時速，直接assign給未知值（想必結果應該很不好，但想不出方法可以先這樣交差）
-
 => 懶惰的方法覺得可以~ (備案咩~)
 
 
 (5) 加入尖峰時刻可能開比較慢，或者特定經緯度會塞車等條件(研究POI?)
-
 => ㄅ是很想研究POI, 頂多加尖峰時刻(懶惰鬼)
 
 
-(6) 人數越多開越久，所以對於時間上的影響力也加進去(？)
-
+(6) "人數"越多開越久，所以對於時間上的影響力也加進去(？)
 => 一定正相關 but i don't know how QQ (思考中)
 
