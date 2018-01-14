@@ -22,9 +22,12 @@ B. 機場(John F. Kennedy International Airport) JFK Airport Latitude/Longitude:
 => 先把尖峰時刻的因素加上去
 現在有個小問題 尖峰時間有分 第一大尖峰 大二大....
 尖峰時間=時速慢??? ##驗證
-依據TLC的統計資料 尖峰的時段是差不多的!!! https://www.quora.com/What-times-are-considered-rush-hour-in-New-York-City
-平日+星期日: 8am, 4pm
-星期六: 12pm, 4pm, 8pm
+TLC的統計資料 尖峰的時段 https://www.quora.com/What-times-are-considered-rush-hour-in-New-York-City
+平日: 7,8,9,18,19,20
+星期六: 0,1,18,19,20,22,23
+星期日: 0,1,17,18,19
+後來決定畫一週每日每時的speed比較，看是否與TLC的載客量趨勢吻合
+
 
 機場 <-> 曼哈頓地區
 	(情況一)將大尖峰時間的資料取出算平均時速
