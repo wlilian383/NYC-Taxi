@@ -91,13 +91,15 @@ def computeSpeed( lat0, lng0, lat1, lng1, trip_duration):
 	return velocity
 
 def roundTripAirport( lat0, lng0, lat1, lng1 ):
-	r = 19
+	r = 8
 	airport_lat = -73.7822222222
 	airport_lng = 40.6441666667
 	pickup_dis = get_distance_hav(airport_lat, airport_lng, lat0, lng0)
 	dropup_dis = get_distance_hav(airport_lat,airport_lng, lat1, lng1)
 
-	if pickup_dis < r:
+	if pickup_dis < r and dropup_dis < r:
+		airport = "interTrip_in_airport"
+	elif pickup_dis < r:
 		airport = "pickup_in_airport"
 	elif dropup_dis < r:
 		airport = "dropoff_in_airport"
@@ -151,8 +153,6 @@ if __name__ == "__main__" :
 		row.append(airport)
 	print("Number of datas (Original) : " + str(len(inputList)-1) )
 	
-
-	"""
 	# filter the outliers with trip_duration and distance
 	for row in inputList[1:]:
 		trip_duration = int(row[ getCloumnByName('trip_duration',inputList[0]) ])
@@ -162,16 +162,17 @@ if __name__ == "__main__" :
 		if distance > 100:
 			rowIndex = inputList.index(row)
 			del inputList[rowIndex]
-		elif trip_duration > 9000:
+		elif trip_duration > 9000 or trip_duration < 60:
 			rowIndex = inputList.index(row)
 			del inputList[rowIndex]
 		elif speed > 200:
 			rowIndex = inputList.index(row)
 			del inputList[rowIndex]
 	print("Number of datas (After) : " + str(len(inputList)-1))
+	
 	writefile( inputList, "train_deleteOutlier.csv")
-	"""
-	writefile( inputList, "train_deleteOutlier.csv")
+
+	#writefile( inputList, "train_newColumn.csv")
 	# timer end
 	tEnd = time.time()
 
