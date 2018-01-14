@@ -93,7 +93,7 @@ def computeSpeed( lat0, lng0, lat1, lng1, trip_duration):
 def roundTripAirport( lat0, lng0, lat1, lng1 ):
 	
 	#JFK / LGA
-	airportList = [[8,-73.7822222222,40.6441666667],[4.5,-73.87396590000003,40.7769271]]
+	airportList = [[4.5,-73.7822222222,40.6441666667],[4.5,-73.87396590000003,40.7769271]]
 	airportFlag = []
 	for airport in airportList:
 		r = airport[0]
@@ -185,7 +185,28 @@ if __name__ == "__main__" :
 			rowIndex = inputList.index(row)
 			del inputList[rowIndex]
 	print("Number of datas (After) : " + str(len(inputList)-1))
-	
+
+	cnt = [0.0,0.0,0.0,0.0]
+	for row in inputList[1:]:
+		airport = row[ getColByName('airport',inputList[0]) ]
+		if airport == "interTrip_between_two_airport":
+			cnt[0] +=1 
+		elif airport == "pickup_in_an_airport":
+	 		cnt[1] +=1
+		elif airport == "dropoff_in_an_airport":
+			cnt[2] +=1
+		elif airport == "interTrip_in_an_airport":
+			cnt[3] +=1
+
+	cnt_sum = 0.0
+	for cnt_each in cnt:
+		cnt_sum += cnt_each
+	print("---------- Around airport data: " + str(cnt_sum) + "(" + str(cnt_sum/(len(inputList)-1)) + ") ----------")
+	print("InterTrip_between_two_airport: " + str(cnt[0]) + " (" + str(cnt[0]/cnt_sum*100) + "%)" )
+	print("Pickup_in_an_airport: " + str(cnt[1]) + " (" + str(cnt[1]/cnt_sum*100) + "%)" )
+	print("Dropoff_in_an_airport: " + str(cnt[2]) + " (" + str(cnt[2]/cnt_sum*100) + "%)" )
+	print("InterTrip_in_an_airport: " + str(cnt[3]) + " (" + str(cnt[3]/cnt_sum*100) + "%)" )
+
 	writefile( inputList, "train_deleteOutlier.csv")
 
 	#writefile( inputList, "train_newColumn.csv")
