@@ -111,16 +111,16 @@ def roundTripAirport( lat0, lng0, lat1, lng1 ):
 		else: #"no"
 			airportFlag.append(0)
 
-	if airportFlag[0]!=0 and airportFlag[0]!=0:
+	if airportFlag[0]!=0 and airportFlag[1]!=0:
 		airport = "interTrip_between_two_airport"
-	elif airportFlag[0]==1 or airportFlag[0]==1:
-	 	airport = "pickup_in_airport"
-	elif airportFlag[0]==2 or airportFlag[0]==2:
-		airport = "dropoff_in_airport"
-	elif airportFlag[0]==3 or airportFlag[0]==3:
-		airport = "interTrip_in_airport"
+	elif airportFlag[0]==1 or airportFlag[1]==1:
+	 	airport = "pickup_in_an_airport"
+	elif airportFlag[0]==2 or airportFlag[1]==2:
+		airport = "dropoff_in_an_airport"
+	elif airportFlag[0]==3 or airportFlag[1]==3:
+		airport = "interTrip_in_an_airport"
 	else:
-		airport = "no"
+		airport = "in_downtown"
 	return airport
 
 def getColByName( columnName, columnNameList ):
