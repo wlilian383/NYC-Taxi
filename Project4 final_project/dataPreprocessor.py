@@ -91,23 +91,39 @@ def computeSpeed( lat0, lng0, lat1, lng1, trip_duration):
 	return velocity
 
 def roundTripAirport( lat0, lng0, lat1, lng1 ):
-	r = 8
-	airport_lat = -73.7822222222
-	airport_lng = 40.6441666667
-	pickup_dis = get_distance_hav(airport_lat, airport_lng, lat0, lng0)
-	dropup_dis = get_distance_hav(airport_lat,airport_lng, lat1, lng1)
+	
+	#JFK / LGA
+	airportList = [[8,-73.7822222222,40.6441666667],[4.5,-73.87396590000003,40.7769271]]
+	airportFlag = []
+	for airport in airportList:
+		r = airport[0]
+		airport_lat = airport[1]
+		airport_lng = airport[2]
+		pickup_dis = get_distance_hav(airport_lat, airport_lng, lat0, lng0)
+		dropup_dis = get_distance_hav(airport_lat,airport_lng, lat1, lng1)
 
-	if pickup_dis < r and dropup_dis < r:
-		airport = "interTrip_in_airport"
-	elif pickup_dis < r:
-		airport = "pickup_in_airport"
-	elif dropup_dis < r:
+		if pickup_dis < r and dropup_dis < r: # "interTrip_in_airport"
+			airportFlag.append(3)
+		elif pickup_dis < r: # "pickup_in_airport"
+			airportFlag.append(1)
+		elif dropup_dis < r: # "dropoff_in_airport"
+			airportFlag.append(2)
+		else: #"no"
+			airportFlag.append(0)
+
+	if airportFlag[0]!=0 and airportFlag[0]!=0:
+		airport = "interTrip_between_two_airport"
+	elif airportFlag[0]==1 or airportFlag[0]==1:
+	 	airport = "pickup_in_airport"
+	elif airportFlag[0]==2 or airportFlag[0]==2:
 		airport = "dropoff_in_airport"
+	elif airportFlag[0]==3 or airportFlag[0]==3:
+		airport = "interTrip_in_airport"
 	else:
 		airport = "no"
 	return airport
 
-def getCloumnByName( columnName, columnNameList ):
+def getColByName( columnName, columnNameList ):
 	index = columnNameList.index(columnName)
 	return index
 
@@ -135,13 +151,13 @@ if __name__ == "__main__" :
 	
 	# fill the value of new columns
 	for row in inputList[1:]:
-		trip_duration = int(row[ getCloumnByName('trip_duration',inputList[0]) ])
-		pickup_datetime = row[ getCloumnByName('pickup_datetime',inputList[0]) ]
-		dropoff_datetime = row[ getCloumnByName('dropoff_datetime',inputList[0]) ]
-		pickup_longitude = float(row[ getCloumnByName('pickup_longitude',inputList[0]) ])
-		pickup_latitude = float(row[ getCloumnByName('pickup_latitude',inputList[0]) ])
-		dropoff_longitude = float(row[ getCloumnByName('dropoff_longitude',inputList[0]) ])
-		dropoff_latitude = float(row[ getCloumnByName('dropoff_latitude',inputList[0]) ])
+		trip_duration = int(row[ getColByName('trip_duration',inputList[0]) ])
+		pickup_datetime = row[ getColByName('pickup_datetime',inputList[0]) ]
+		dropoff_datetime = row[ getColByName('dropoff_datetime',inputList[0]) ]
+		pickup_longitude = float(row[ getColByName('pickup_longitude',inputList[0]) ])
+		pickup_latitude = float(row[ getColByName('pickup_latitude',inputList[0]) ])
+		dropoff_longitude = float(row[ getColByName('dropoff_longitude',inputList[0]) ])
+		dropoff_latitude = float(row[ getColByName('dropoff_latitude',inputList[0]) ])
 		
 		time_error = computeTimeError( pickup_datetime, dropoff_datetime, trip_duration )
 		distance =  get_distance_hav( pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude )
@@ -155,9 +171,9 @@ if __name__ == "__main__" :
 	
 	# filter the outliers with trip_duration and distance
 	for row in inputList[1:]:
-		trip_duration = int(row[ getCloumnByName('trip_duration',inputList[0]) ])
-		distance = float(row[ getCloumnByName('distance',inputList[0]) ])
-		speed = float(row[ getCloumnByName('speed',inputList[0]) ])
+		trip_duration = int(row[ getColByName('trip_duration',inputList[0]) ])
+		distance = float(row[ getColByName('distance',inputList[0]) ])
+		speed = float(row[ getColByName('speed',inputList[0]) ])
 		
 		if distance > 100:
 			rowIndex = inputList.index(row)
