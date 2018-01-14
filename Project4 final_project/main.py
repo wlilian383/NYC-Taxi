@@ -88,7 +88,7 @@ def getCloumnByName( columnName, columnNameList ):
 	index = columnNameList.index(columnName)
 	return index
 
-def scatterPlot( a ):
+def Plot( a ):
 	time=[]
 	speed=[]
 	dist=[]
@@ -108,18 +108,32 @@ def scatterPlot( a ):
 		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
 		
 		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
-		if(PickUpDateTime.weekday() != 6):
-			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 15
-			or PickUpDateTime.hour == 16 or PickUpDateTime.hour == 17):
+		if(PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
+			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
+			or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20):
 				peak_pickup.append( PickUpDateTime.hour )
 				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-		else:
-			if(PickUpDateTime.hour == 11 or PickUpDateTime.hour == 12 or PickUpDateTime.hour == 13 or PickUpDateTime.hour == 15
-			or PickUpDateTime.hour == 16 or PickUpDateTime.hour == 17 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20
-			or PickUpDateTime.hour == 21):
+			else:
 				nonpeak_pickup.append( PickUpDateTime.hour )
 				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-				
+
+		elif( PickUpDateTime.weekday() == 6 ):
+			if(PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22
+			or PickUpDateTime.hour == 23 or PickUpDateTime.hour == 0 or PickUpDateTime.hour == 1 ):
+				peak_pickup.append( PickUpDateTime.hour )
+				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+			else:
+				nonpeak_pickup.append( PickUpDateTime.hour )
+				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+
+		else:
+			if(PickUpDateTime.hour == 17 or PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 0
+			or PickUpDateTime.hour == 1 ):
+				peak_pickup.append( PickUpDateTime.hour )
+				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+			else:
+				nonpeak_pickup.append( PickUpDateTime.hour )
+				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
 				
 	
 	#plt.title('Scatter Plot1')  
@@ -226,7 +240,7 @@ if __name__ == "__main__" :
 	writefile( inputList, "testoutput.csv")'''
 	# scatter plot1
 	a = readfile( "testoutput.csv" )
-	scatterPlot( a )
+	Plot( a )
 
 	# timer end
 	tEnd = time.time()
