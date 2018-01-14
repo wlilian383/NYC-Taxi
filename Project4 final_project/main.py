@@ -103,7 +103,7 @@ def scatterPlot( a ):
 	for cnt in range(1,len(a)):
 		#time.append( int(a[cnt][getCloumnByName('trip_duration',a[0])]) )
 		#dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
-		#speed.append( a[cnt][getCloumnByName('speed',a[0])] )
+		speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
 		#passenger_count.append( int(a[cnt][getCloumnByName('passenger_count',a[0])]) )
 		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
 		
@@ -112,13 +112,13 @@ def scatterPlot( a ):
 			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 15
 			or PickUpDateTime.hour == 16 or PickUpDateTime.hour == 17):
 				peak_pickup.append( PickUpDateTime.hour )
-				peak_speed.append( a[cnt][getCloumnByName('speed',a[0])] )
+				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
 		else:
 			if(PickUpDateTime.hour == 11 or PickUpDateTime.hour == 12 or PickUpDateTime.hour == 13 or PickUpDateTime.hour == 15
 			or PickUpDateTime.hour == 16 or PickUpDateTime.hour == 17 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20
 			or PickUpDateTime.hour == 21):
 				nonpeak_pickup.append( PickUpDateTime.hour )
-				nonpeak_speed.append( a[cnt][getCloumnByName('speed',a[0])] )
+				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
 				
 				
 	
@@ -151,11 +151,16 @@ def scatterPlot( a ):
 	#ax2.scatter(nonpeak_pickup,nonpeak_speed,c = 'b')
 	
 	
-	bins = np.linspace(math.ceil(min(data)), math.floor(max(data)), 2)
-	f, (ax1, ax2) = plt.subplots(1, 2, sharex=True)
-	ax1.hist(np.array(peak_speed), bins=bins)
-	ax1.set_title('Peak Speed')
-	ax2.hist(np.array(nonpeak_speed))
+	bins = np.linspace(0, 50, 50)
+	#f, (ax1, ax2) = plt.subplots(1, 2, sharex=True)
+	
+	plt.subplot(211)
+	plt.hist(np.array(peak_speed),bins=bins)
+	plt.title('Peak Speed')
+	
+	plt.subplot(212)
+	plt.hist(np.array(nonpeak_speed),bins=bins,color='r')
+	
 	
 	plt.show()
 
