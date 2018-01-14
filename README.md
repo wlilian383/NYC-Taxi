@@ -12,7 +12,9 @@
 (2) 上車地點，因為我們的資料分佈大抵只有在
 A. 曼哈頓區
 B. 機場(John F. Kennedy International Airport) JFK Airport Latitude/Longitude: 40.6441666667, -73.7822222222
+C. 機場(LaGuardia Airport) LGA Latitude/Longitude: 40.7769271,-73.87396590000003
 推測在機場上/落車的人，目的都是去/來自曼哈頓，這樣也許會開比較久，要由「經緯度」去取，來做推測是否正確的 ##驗證。
+他有兩個機場 半徑都取4.5km?當作機場範圍
 
 機場:以機場為中心，取適當距離，範圍內都當做是機場
 
