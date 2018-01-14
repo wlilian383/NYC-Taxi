@@ -2,9 +2,10 @@ import csv
 import sys
 import time
 import copy
-from datetime import datetime 
+from datetime import datetime
 import matplotlib.pyplot as plt
-from math import sin, asin, cos, radians, fabs, sqrt 
+from math import sin, asin, cos, radians, fabs, sqrt , ceil, floor
+import numpy as np
 
 def readfile(filename) :
 	inputFile1 = str(filename)
@@ -48,6 +49,13 @@ def computeTimeError( pickTime, dropTime, trip_duration ):
 	
 	return time_error
 
+def computeDatetime( Time ):
+	try:
+		dt = datetime.strptime(Time,'%Y/%m/%d %H:%M')
+	except ValueError:
+		dt = datetime.strptime(Time,'%Y-%m-%d %H:%M:%S')
+	return dt
+
 def hav( theta ):  
 	s = sin( theta / 2 )  
 	return s * s    
@@ -84,38 +92,71 @@ def scatterPlot( a ):
 	time=[]
 	speed=[]
 	dist=[]
+	passenger_count=[]
+	pickup_datetime=[]
+	
+	peak_pickup=[]
+	nonpeak_pickup=[]
+	peak_speed=[]
+	nonpeak_speed=[]
+	
 	for cnt in range(1,len(a)):
 		#time.append( int(a[cnt][getCloumnByName('trip_duration',a[0])]) )
-		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
-		speed.append(a[cnt][getCloumnByName('speed',a[0])]) #
+		#dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
+		#speed.append( a[cnt][getCloumnByName('speed',a[0])] )
+		#passenger_count.append( int(a[cnt][getCloumnByName('passenger_count',a[0])]) )
+		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
+		
+		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
+		if(PickUpDateTime.weekday() != 6):
+			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 15
+			or PickUpDateTime.hour == 16 or PickUpDateTime.hour == 17):
+				peak_pickup.append( PickUpDateTime.hour )
+				peak_speed.append( a[cnt][getCloumnByName('speed',a[0])] )
+		else:
+			if(PickUpDateTime.hour == 11 or PickUpDateTime.hour == 12 or PickUpDateTime.hour == 13 or PickUpDateTime.hour == 15
+			or PickUpDateTime.hour == 16 or PickUpDateTime.hour == 17 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20
+			or PickUpDateTime.hour == 21):
+				nonpeak_pickup.append( PickUpDateTime.hour )
+				nonpeak_speed.append( a[cnt][getCloumnByName('speed',a[0])] )
+				
+				
 	
-	#time.sort()# ##
-	#dist.sort()# ##
-	plt.title('Scatter Plot1')  
+	#plt.title('Scatter Plot1')  
 	#plt.xlabel('time')
-	plt.xlabel('speed') #
-	plt.ylabel('dist')  
+	#plt.ylabel('dist')  
 	#plt.scatter(time,dist)
-	plt.scatter(speed,dist) #
-	plt.show()
-
-def scatterPlot2( a ):
-	time=[]
-	speed=[]
-	dist=[]
-	for cnt in range(1,len(a)):
-		#time.append( int(a[cnt][getCloumnByName('trip_duration',a[0])]) )
-		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
-		speed.append(a[cnt][getCloumnByName('speed',a[0])]) #
 	
-	#time.sort()# ##
-	#dist.sort()# ##
-	plt.title('Scatter Plot1')  
-	#plt.xlabel('time')
-	plt.xlabel('speed') #
-	plt.ylabel('dist')  
-	#plt.scatter(time,dist)
-	plt.scatter(speed,dist) #
+	#plt.xlabel('speed') #
+	#plt.ylabel('dist')
+	#plt.scatter(speed,dist) #
+	
+	#plt.xlabel('passenger')
+	#plt.ylabel('speed')
+	#plt.scatter(passenger_count,speed)
+	
+	#plt.xlabel('passenger')
+	#plt.ylabel('time')
+	#plt.scatter(passenger_count,time)
+	
+	
+	'''plt.xlabel('Pick Up Time')
+	plt.ylabel('Speed')
+	plt.scatter(peak_pickup,peak_speed,c = 'r')
+	plt.scatter(nonpeak_pickup,nonpeak_speed,c = 'b')'''
+	
+	#f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+	#ax1.scatter(peak_pickup,peak_speed,c = 'r')
+	#ax1.set_title('Pick Up Time vs. Speed')
+	#ax2.scatter(nonpeak_pickup,nonpeak_speed,c = 'b')
+	
+	
+	bins = np.linspace(math.ceil(min(data)), math.floor(max(data)), 2)
+	f, (ax1, ax2) = plt.subplots(1, 2, sharex=True)
+	ax1.hist(np.array(peak_speed), bins=bins)
+	ax1.set_title('Peak Speed')
+	ax2.hist(np.array(nonpeak_speed))
+	
 	plt.show()
 
 if __name__ == "__main__" :
@@ -128,7 +169,7 @@ if __name__ == "__main__" :
 		sys.exit()
 
 	# input file name and output file name
-	input_fileName = sys.argv[1]
+	input_fileName = sys.argv[1]   #./data/train.csv
 	output_fileName = "./data/testoutput.csv"
 	
 	# read the datas
@@ -158,6 +199,7 @@ if __name__ == "__main__" :
 		row.append(time_error)
 		row.append(distance)
 		row.append(speed)
+
 	print("Number of datas (Original) : " + str(len(inputList)-1) )
 	
 	# filter the outliers with trip_duration and distance
@@ -179,7 +221,7 @@ if __name__ == "__main__" :
 	writefile( inputList, "testoutput.csv")'''
 	# scatter plot1
 	a = readfile( "testoutput.csv" )
-	scatterPlot2( a )
+	scatterPlot( a )
 
 	# timer end
 	tEnd = time.time()
