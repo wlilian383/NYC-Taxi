@@ -7,6 +7,7 @@ def main():
 	tStart = time.time()
 	
 	a = readfile( "train_deleteOutlier.csv" )
+	#a = readfile( "testoutput.csv" )
 	Plot( a )
 
 	# timer end

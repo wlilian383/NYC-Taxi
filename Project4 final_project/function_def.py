@@ -164,19 +164,25 @@ def Plot( a ):
 			sunday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
 			counter[6][PickUpDateTime.hour]+=1
 	for cnt in range(0,24):
-		print(str(monday[cnt]/counter[0][cnt]))
+		print(str(monday[cnt]/counter[0][cnt]),end=',')
+	print('\n')
 	for cnt in range(0,24):
-		print(str(tuesday[cnt]/counter[0][cnt]))
+		print(str(tuesday[cnt]/counter[0][cnt]),end=',')
+	print('\n')
 	for cnt in range(0,24):
-		print(str(wednesday[cnt]/counter[0][cnt]))
+		print(str(wednesday[cnt]/counter[0][cnt]),end=',')
+	print('\n')
 	for cnt in range(0,24):
-		print(str(thursday[cnt]/counter[0][cnt]))
+		print(str(thursday[cnt]/counter[0][cnt]),end=',')
+	print('\n')
 	for cnt in range(0,24):
-		print(str(friday[cnt]/counter[0][cnt]))
+		print(str(friday[cnt]/counter[0][cnt]),end=',')
+	print('\n')
 	for cnt in range(0,24):
-		print(str(saturday[cnt]/counter[0][cnt]))
+		print(str(saturday[cnt]/counter[0][cnt]),end=',')
+	print('\n')
 	for cnt in range(0,24):
-		print(str(sunday[cnt]/counter[0][cnt]))
+		print(str(sunday[cnt]/counter[0][cnt]),end=',')
 	
 	#plt.title('Scatter Time-Distance')  
 	#plt.xlabel('time')
