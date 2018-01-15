@@ -61,7 +61,7 @@ TLC的統計資料 尖峰的時段 https://www.quora.com/What-times-are-consider
 => 一定正相關 but i don't know how QQ (思考中)
 
 【更新進度】
-1. 做報告(放我們到底刪了什麼資料、分析了什麼、Time error其實一分鐘以內沒誤差、(Dist-time圖, speed-time圖,Speed, distance如何計算、刪outlier參數設定為何,地理 速度 距離 時間,依照tlc資料載客量算rush hour,依照原檔畫speed跟時間對應圖、出來的圖是怎樣、為什麼決定用那些參數、資料地理位置分佈狀況、為何特別考慮機場、機場上下客型態、機場內移動、機場間移動、機場範圍如何決定 用圓心半徑什麼的)
+1. 做報告(放我們到底刪了什麼資料、分析了什麼、Time error其實一分鐘以內沒誤差、(Dist-time圖, speed-time圖,Speed, distance如何計算、刪outlier參數設定為何,地理非NYC 速度 距離 時間,依照tlc資料載客量算rush hour,依照原檔畫speed跟時間對應圖、出來的圖是怎樣、為什麼決定用那些參數、資料地理位置分佈狀況、為何特別考慮機場、機場上下客型態、機場內移動、機場間移動、機場範圍如何決定 用圓心半徑什麼的)
 
 2. 要不要考慮在機場下客的data？
 如果其實 (1)從機場到市區的人
@@ -79,6 +79,3 @@ TLC的統計資料 尖峰的時段 https://www.quora.com/What-times-are-consider
 4. 直接依照每天每個小時平均時速硬assign
 ##先硬塞看看效果好不好
 ##不好的話就寫因為距離不準、沒有分析路網跟沒有分析POI，不知道哪裡容易塞車
-
-5.根據NYC經緯度刪資料
-##畫地理分佈後發現有outlier
