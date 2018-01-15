@@ -1,5 +1,6 @@
 # NYC-Taxi
 
+data source: https://www.kaggle.com/c/nyc-taxi-trip-duration/data
 【想法】關於散布圖
 1. 由圖，粗估速率大概在15-72 km/hr
 分析造成速率差距這麼大的主因是
