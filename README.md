@@ -1,12 +1,17 @@
 # NYC-Taxi
 
 data source: https://www.kaggle.com/c/nyc-taxi-trip-duration/data
+參考分析資料: https://www.kaggle.com/headsortails/nyc-taxi-eda-update-the-fast-the-curious
+NYC Taxi EDA - Update: The fast & the curious?
+https://www.kaggle.com/headsortails/nyc-taxi-eda-update-the-fast-the-curious
+
 【想法】關於散布圖
 1. 由圖，粗估速率大概在15-72 km/hr
 分析造成速率差距這麼大的主因是
 (1) 距離其實不準，直線或對角線的部分，如果實際是走兩邊和的直線但我們的最短距離是採對角線(直覺的兩地直線距離)，就會造成推估的時速偏快。
 →也許可以由那個powerful的地圖網站，算一般開車會走的距離，但他的API不知道要怎麼用，如果要研究很久或太難取得的話，這個方案勢必得放棄。
-
+OSRM website(return duration time) Open Source Routing Machine:
+http://map.project-osrm.org/?z=8&center=58.325357%2C-105.342407&loc=58.836490%2C-104.166870&loc=58.342659%2C-104.326172&hl=en&alt=0
 => 想放棄 QQ
 
 
