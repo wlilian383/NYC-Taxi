@@ -8,7 +8,11 @@ def main():
 	
 	a = readfile( "train_deleteOutlier.csv" )
 	#a = readfile( "testoutput.csv" )
-	Plot( a )
+	
+	PlotScatterTimeDistance( a )
+	PlotScatterSpeedDistance( a )
+	RushHourAndNonRushHourSpeedHist( a )
+	CountSpeedOfEachDayAndHour( a )
 
 	# timer end
 	tEnd = time.time()

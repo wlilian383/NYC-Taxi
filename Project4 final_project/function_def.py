@@ -24,36 +24,34 @@ def writefile(list_input,filename2):
 		fw.write("%s\n" % list_input[cnt1][len(list_input[0])-1] )
 
 def computeTimeError( pickTime, dropTime, trip_duration ):
-	try:
-		pickTime = datetime.strptime(pickTime,'%Y/%m/%d %H:%M')
-		dropTime = datetime.strptime(dropTime,'%Y/%m/%d %H:%M')
-	except ValueError:
-		pickTime = datetime.strptime(pickTime,'%Y-%m-%d %H:%M:%S')
-		dropTime = datetime.strptime(dropTime,'%Y-%m-%d %H:%M:%S')
-	datatime_duration = dropTime - pickTime
-	#print(datatime_duration)
+	datatime_duration = computeDatetime(dropTime) - computeDatetime(pickTime)
+	
 	# split the day and time (ex: 40 days, 19:32:00 => 40 and 19:32:00)
-	datatimeList = str(datatime_duration).split(' days, ')# ##
+	datatimeList = []
+	if str(datatime_duration).find(' days, ')!=-1 :
+		datatimeList = str(datatime_duration).split(' days, ')
+	elif str(datatime_duration).find(' day, ')!=-1 :
+		datatimeList = str(datatime_duration).split(' day, ')
+	else:
+		datatimeList.append(datatime_duration)
+
+	# check the datatime formate (if len is two, means format is day + time, other means only times)
 	if len(datatimeList) == 2:
 		days = int(datatimeList[0])
 		times = datatimeList[1]
 	else:
 		days = 0
 		times = datatimeList[0]
-	#print( str(days) + " "   + times )
-	hours, minutes, seconds = map(int ,times.split(':'))
+	
+	hours, minutes, seconds = map(int ,str(times).split(':'))
 	datatime_duration = ((days*24) + hours) * 3600 + minutes * 60
 
 	#compute the time error
 	time_error = abs(trip_duration - datatime_duration)
-	
 	return time_error
 
 def computeDatetime( Time ):
-	try:
-		dt = datetime.strptime(Time,'%Y/%m/%d %H:%M')
-	except ValueError:
-		dt = datetime.strptime(Time,'%Y-%m-%d %H:%M:%S')
+	dt = datetime.strptime(Time,'%Y-%m-%d %H:%M:%S')
 	return dt
 
 def hav( theta ):  
@@ -88,34 +86,35 @@ def getCloumnByName( columnName, columnNameList ):
 	index = columnNameList.index(columnName)
 	return index
 
-def Plot( a ):
+def PlotScatterTimeDistance( a ):
 	time=[]
+	dist=[]
+	for cnt in range(1,len(a)):
+		time.append( int(a[cnt][getCloumnByName('trip_duration',a[0])]) )
+		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
+	plt.title('Scatter Time-Distance')  
+	plt.xlabel('time')
+	plt.ylabel('dist')  
+	plt.scatter(time,dist)
+	plt.show()
+
+def PlotScatterSpeedDistance( a ):
 	speed=[]
 	dist=[]
-	passenger_count=[]
-	pickup_datetime=[]
-	
+	for cnt in range(1,len(a)):
+		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
+		speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+	plt.title(Scatter Speed-Distance')
+	plt.xlabel('speed')
+	plt.ylabel('dist')
+	plt.scatter(speed,dist)
+	plt.show()
+
+def RushHourAndNonRushHourSpeedHist( a ):
 	peak_speed=[]
 	nonpeak_speed=[]
-	
-	monday=[0 for i in range(0,24)]
-	tuesday=[0 for i in range(0,24)]
-	wednesday=[0 for i in range(0,24)]
-	thursday=[0 for i in range(0,24)]
-	friday=[0 for i in range(0,24)]
-	saturday=[0 for i in range(0,24)]
-	sunday=[0 for i in range(0,24)]
-	counter=[[0 for i in range(0,24)] for i in range(0,7)]
-	
 	for cnt in range(1,len(a)):
-		#time.append( int(a[cnt][getCloumnByName('trip_duration',a[0])]) )
-		#dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
-		#speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-		#passenger_count.append( int(a[cnt][getCloumnByName('passenger_count',a[0])]) )
-		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
-		
-		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
-		'''if(PickUpDateTime.weekday() != 5 or PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
+		if(PickUpDateTime.weekday() != 5 or PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
 			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
 			or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20):
 				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
@@ -141,7 +140,37 @@ def Plot( a ):
 			or PickUpDateTime.hour == 1 ):
 				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
 			else:
-				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )'''
+				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+	
+	print("Rush-hour-avg-speed:", np.mean(peak_speed))
+	print("Non-rush-hour-avg-speed:", np.mean(nonpeak_speed))
+	bins = np.linspace(0, 50, 50)
+	plt.subplot(211)
+	plt.hist(np.array(peak_speed),bins=bins,color='r')
+	plt.title('Rush-hour Speed vs. Non-rush-hour Speed')
+	plt.subplot(212)
+	plt.hist(np.array(nonpeak_speed),bins=bins)
+	plt.show()
+	
+def CountSpeedOfEachDayAndHour( a ):
+	pickup_datetime=[]
+	
+	# speed of each day and hour
+	monday=[0 for i in range(0,24)]
+	tuesday=[0 for i in range(0,24)]
+	wednesday=[0 for i in range(0,24)]
+	thursday=[0 for i in range(0,24)]
+	friday=[0 for i in range(0,24)]
+	saturday=[0 for i in range(0,24)]
+	sunday=[0 for i in range(0,24)]
+	# event number of each day and hour
+	counter=[[0 for i in range(0,24)] for i in range(0,7)]
+	
+	for cnt in range(1,len(a)):
+		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
+		# convert to datetime format
+		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
+		
 		if(PickUpDateTime.weekday() == 1):
 			monday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
 			counter[0][PickUpDateTime.hour]+=1
@@ -163,6 +192,7 @@ def Plot( a ):
 		else:
 			sunday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
 			counter[6][PickUpDateTime.hour]+=1
+	# print average speed of each day and hour
 	for cnt in range(0,24):
 		print(str(monday[cnt]/counter[0][cnt]),end=',')
 	print('\n')
@@ -183,29 +213,3 @@ def Plot( a ):
 	print('\n')
 	for cnt in range(0,24):
 		print(str(sunday[cnt]/counter[0][cnt]),end=',')
-	
-	#plt.title('Scatter Time-Distance')  
-	#plt.xlabel('time')
-	#plt.ylabel('dist')  
-	#plt.scatter(time,dist)
-	
-	#plt.title(Scatter Speed-Distance')
-	#plt.xlabel('speed')
-	#plt.ylabel('dist')
-	#plt.scatter(speed,dist)
-	
-	#f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-	#ax1.scatter(peak_pickup,peak_speed,c = 'r')
-	#ax1.set_title('Pick Up Time vs. Speed')
-	#ax2.scatter(nonpeak_pickup,nonpeak_speed,c = 'b')
-	
-	#print("Rush-hour-avg-speed:", np.mean(peak_speed))
-	#print("Non-rush-hour-avg-speed:", np.mean(nonpeak_speed))
-	#bins = np.linspace(0, 50, 50)
-	#plt.subplot(211)
-	#plt.hist(np.array(peak_speed),bins=bins)
-	#plt.title('Rush-hour Speed vs. Non-rush-hour Speed')
-	#plt.subplot(212)
-	#plt.hist(np.array(nonpeak_speed),bins=bins,color='r')
-		
-	plt.show()
