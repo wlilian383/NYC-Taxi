@@ -6,13 +6,15 @@ def main():
 	# timer start
 	tStart = time.time()
 	
-	a = readfile( "train_deleteOutlier.csv" )
-	#a = readfile( "testoutput.csv" )
+	#a = readfile( "train_deleteOutlier.csv" )
 	
 	#PlotScatterTimeDistance( a )
 	#PlotScatterSpeedDistance( a )
 	#RushHourAndNonRushHourSpeedHist( a )
-	CountSpeedOfEachDayAndHour( a )
+	#CountSpeedOfEachDayAndHour( a )
+	
+	a = readfile( "model.csv" )
+	PlotScatterTimeGuess( a )
 
 	# timer end
 	tEnd = time.time()

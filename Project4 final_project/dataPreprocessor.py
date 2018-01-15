@@ -2,47 +2,6 @@ import sys
 sys.path.append("./")
 from function_def import *
 
-def roundTripAirport( lat0, lng0, lat1, lng1 ):
-	
-	#JFK / LGA
-	airportList = [[4.5,-73.7822222222,40.6441666667],[4.5,-73.87396590000003,40.7769271]]
-	airportFlag = []
-	for airport in airportList:
-		r = airport[0]
-		airport_lat = airport[1]
-		airport_lng = airport[2]
-		pickup_dis = get_distance_hav(airport_lat, airport_lng, lat0, lng0)
-		dropup_dis = get_distance_hav(airport_lat,airport_lng, lat1, lng1)
-
-		if pickup_dis < r and dropup_dis < r: # "interTrip_in_airport"
-			airportFlag.append(3)
-		elif pickup_dis < r: # "pickup_in_airport"
-			airportFlag.append(1)
-		elif dropup_dis < r: # "dropoff_in_airport"
-			airportFlag.append(2)
-		else: #"no"
-			airportFlag.append(0)
-
-	if airportFlag[0]!=0 and airportFlag[1]!=0:
-		airport = "interTrip_between_two_airport"
-	elif airportFlag[0]==1 or airportFlag[1]==1:
-	 	airport = "pickup_in_an_airport"
-	elif airportFlag[0]==2 or airportFlag[1]==2:
-		airport = "dropoff_in_an_airport"
-	elif airportFlag[0]==3 or airportFlag[1]==3:
-		airport = "interTrip_in_an_airport"
-	else:
-		airport = "in_downtown"
-	return airport
-
-def checkPlaceNYC( long, lat ):
-	if ( lat > 40.566874 and lat < 40.916477 and long > -74.041532 and long < -73.728422 ):
-		return 1
-	elif ( lat > 40.502164 and lat < 40.648196 and long > -74.253019 and long < -74.051145):
-		return 1
-	else:
-		return 0
-
 if __name__ == "__main__" :
 	# timer start
 	tStart = time.time()

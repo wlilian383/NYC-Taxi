@@ -82,16 +82,57 @@ def computeSpeed( lat0, lng0, lat1, lng1, trip_duration):
 	velocity = dist / time
 	return velocity
 
-def getCloumnByName( columnName, columnNameList ):
+def getColByName( columnName, columnNameList ):
 	index = columnNameList.index(columnName)
 	return index
+
+def roundTripAirport( lat0, lng0, lat1, lng1 ):# 這邊應該要放 經 緯 經 緯(而不是上面打的那樣)
+	
+	#JFK / LGA
+	airportList = [[4.5,-73.7822222222,40.6441666667],[4.5,-73.87396590000003,40.7769271]]
+	airportFlag = []
+	for airport in airportList:
+		r = airport[0]
+		airport_lat = airport[1]
+		airport_lng = airport[2]
+		pickup_dis = get_distance_hav(airport_lat, airport_lng, lat0, lng0)
+		dropup_dis = get_distance_hav(airport_lat,airport_lng, lat1, lng1)
+
+		if pickup_dis < r and dropup_dis < r: # "interTrip_in_airport"
+			airportFlag.append(3)
+		elif pickup_dis < r: # "pickup_in_airport"
+			airportFlag.append(1)
+		elif dropup_dis < r: # "dropoff_in_airport"
+			airportFlag.append(2)
+		else: #"no"
+			airportFlag.append(0)
+
+	if airportFlag[0]!=0 and airportFlag[1]!=0:
+		airport = "interTrip_between_two_airport"
+	elif airportFlag[0]==1 or airportFlag[1]==1:
+	 	airport = "pickup_in_an_airport"
+	elif airportFlag[0]==2 or airportFlag[1]==2:
+		airport = "dropoff_in_an_airport"
+	elif airportFlag[0]==3 or airportFlag[1]==3:
+		airport = "interTrip_in_an_airport"
+	else:
+		airport = "in_downtown"
+	return airport
+
+def checkPlaceNYC( long, lat ):
+	if ( lat > 40.566874 and lat < 40.916477 and long > -74.041532 and long < -73.728422 ):
+		return 1
+	elif ( lat > 40.502164 and lat < 40.648196 and long > -74.253019 and long < -74.051145):
+		return 1
+	else:
+		return 0
 
 def PlotScatterTimeDistance( a ):
 	time=[]
 	dist=[]
 	for cnt in range(1,len(a)):
-		time.append( int(a[cnt][getCloumnByName('trip_duration',a[0])]) )
-		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
+		time.append( int(a[cnt][getColByName('trip_duration',a[0])]) )
+		dist.append( float(a[cnt][getColByName('distance',a[0])]) )
 	plt.title('Scatter Time-Distance')  
 	plt.xlabel('time')
 	plt.ylabel('dist')  
@@ -102,8 +143,8 @@ def PlotScatterSpeedDistance( a ):
 	speed=[]
 	dist=[]
 	for cnt in range(1,len(a)):
-		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
-		speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+		dist.append( float(a[cnt][getColByName('distance',a[0])]) )
+		speed.append( float(a[cnt][getColByName('speed',a[0])]) )
 	plt.title('Scatter Speed-Distance')
 	plt.xlabel('speed')
 	plt.ylabel('dist')
@@ -115,36 +156,13 @@ def RushHourAndNonRushHourSpeedHist( a ):
 	nonpeak_speed=[]
 	pickup_datetime=[]
 	for cnt in range(1,len(a)):
-		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
+		pickup_datetime.append( a[cnt][getColByName('pickup_datetime',a[0])] )
 		# convert to datetime format
-		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
-		if(PickUpDateTime.weekday() != 5 or PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
-			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
-			or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20):
-				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-			else:
-				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-		
-		elif( PickUpDateTime.weekday() == 5 ):
-			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
-			or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22 or PickUpDateTime.hour == 23):
-				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-			else:
-				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-				
-		elif( PickUpDateTime.weekday() == 6 ):
-			if(PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22
-			or PickUpDateTime.hour == 23 or PickUpDateTime.hour == 0 or PickUpDateTime.hour == 1 ):
-				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-			else:
-				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-
+		PickUpDateTime = computeDatetime(a[cnt][getColByName('pickup_datetime',a[0])])
+		if( RushHour(PickUpDateTime) == 1 ):
+			peak_speed.append( float(a[cnt][getColByName('speed',a[0])]) )
 		else:
-			if(PickUpDateTime.hour == 17 or PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 0
-			or PickUpDateTime.hour == 1 ):
-				peak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-			else:
-				nonpeak_speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
+			nonpeak_speed.append( float(a[cnt][getColByName('speed',a[0])]) )
 	
 	print("Rush-hour-avg-speed:", np.mean(peak_speed))
 	print("Non-rush-hour-avg-speed:", np.mean(nonpeak_speed))
@@ -155,6 +173,44 @@ def RushHourAndNonRushHourSpeedHist( a ):
 	plt.subplot(212)
 	plt.hist(np.array(nonpeak_speed),bins=bins)
 	plt.show()
+
+def PlotScatterTimeGuess( a ):
+	time=[]
+	guess=[]
+	for cnt in range(1,len(a)):
+		time.append( int(a[cnt][getColByName('trip_duration',a[0])]) )
+		guess.append( float(a[cnt][getColByName('guesstime',a[0])]) ) #may have problem because the weekday format ',' is the saparator of csv file
+	plt.title('Scatter Time-Guesstime')  
+	plt.xlabel('time')
+	plt.ylabel('guesstime')  
+	plt.scatter(time,guess)
+	plt.show()
+
+def RushHour( PickUpDateTime ):
+	if(PickUpDateTime.weekday() != 5 or PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
+		if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
+		or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20):
+			return 1
+		else:
+			return 0
+	elif( PickUpDateTime.weekday() == 5 ):
+		if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
+		or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22 or PickUpDateTime.hour == 23):
+			return 1
+		else:
+			return 0
+	elif( PickUpDateTime.weekday() == 6 ):
+		if(PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22
+		or PickUpDateTime.hour == 23 or PickUpDateTime.hour == 0 or PickUpDateTime.hour == 1 ):
+			return 1
+		else:
+			return 0
+	else:
+		if(PickUpDateTime.hour == 17 or PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 0
+		or PickUpDateTime.hour == 1 ):
+			return 1
+		else:
+			return 0
 	
 def CountSpeedOfEachDayAndHour( a ):
 	pickup_datetime=[]
@@ -171,30 +227,30 @@ def CountSpeedOfEachDayAndHour( a ):
 	counter=[[0 for i in range(0,24)] for i in range(0,7)]
 	
 	for cnt in range(1,len(a)):
-		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
+		pickup_datetime.append( a[cnt][getColByName('pickup_datetime',a[0])] )
 		# convert to datetime format
-		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
+		PickUpDateTime = computeDatetime(a[cnt][getColByName('pickup_datetime',a[0])])
 		
 		if(PickUpDateTime.weekday() == 1):
-			monday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			monday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[0][PickUpDateTime.hour]+=1
 		elif(PickUpDateTime.weekday() == 2):
-			tuesday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			tuesday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[1][PickUpDateTime.hour]+=1
 		elif(PickUpDateTime.weekday() == 3):
-			wednesday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			wednesday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[2][PickUpDateTime.hour]+=1
 		elif(PickUpDateTime.weekday() == 4):
-			thursday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			thursday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[3][PickUpDateTime.hour]+=1
 		elif(PickUpDateTime.weekday() == 5):
-			friday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			friday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[4][PickUpDateTime.hour]+=1
 		elif(PickUpDateTime.weekday() == 6):
-			saturday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			saturday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[5][PickUpDateTime.hour]+=1
 		else:
-			sunday[PickUpDateTime.hour]+= float(a[cnt][getCloumnByName('speed',a[0])])
+			sunday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
 			counter[6][PickUpDateTime.hour]+=1
 	# print average speed of each day and hour
 	for cnt in range(0,24):
