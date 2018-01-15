@@ -83,7 +83,7 @@ if __name__ == "__main__" :
 		row.append(distance)
 		row.append(speed)
 		row.append(airport)
-	#print("Number of datas (Original) : " + str(len(inputList)-1) )
+	#print("Number of datas (Original) : " + str(len(inputList)-1) ) # 1458644
 	
 	# filter the outliers with longitude, latitude, distance, trip_duration and speed
 	#for row in inputList[1:]:

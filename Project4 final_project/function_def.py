@@ -104,7 +104,7 @@ def PlotScatterSpeedDistance( a ):
 	for cnt in range(1,len(a)):
 		dist.append( float(a[cnt][getCloumnByName('distance',a[0])]) )
 		speed.append( float(a[cnt][getCloumnByName('speed',a[0])]) )
-	plt.title(Scatter Speed-Distance')
+	plt.title('Scatter Speed-Distance')
 	plt.xlabel('speed')
 	plt.ylabel('dist')
 	plt.scatter(speed,dist)
@@ -113,7 +113,11 @@ def PlotScatterSpeedDistance( a ):
 def RushHourAndNonRushHourSpeedHist( a ):
 	peak_speed=[]
 	nonpeak_speed=[]
+	pickup_datetime=[]
 	for cnt in range(1,len(a)):
+		pickup_datetime.append( a[cnt][getCloumnByName('pickup_datetime',a[0])] )
+		# convert to datetime format
+		PickUpDateTime = computeDatetime(a[cnt][getCloumnByName('pickup_datetime',a[0])])
 		if(PickUpDateTime.weekday() != 5 or PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
 			if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
 			or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20):
