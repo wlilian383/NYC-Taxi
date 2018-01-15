@@ -187,19 +187,19 @@ def PlotScatterTimeGuess( a ):
 	plt.show()
 
 def RushHour( PickUpDateTime ):
-	if(PickUpDateTime.weekday() != 5 or PickUpDateTime.weekday() != 6 and PickUpDateTime.weekday() != 7 ):
+	if(PickUpDateTime.weekday() != 4 or PickUpDateTime.weekday() != 5 and PickUpDateTime.weekday() != 6 ):
 		if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
 		or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20):
 			return 1
 		else:
 			return 0
-	elif( PickUpDateTime.weekday() == 5 ):
+	elif( PickUpDateTime.weekday() == 4 ):
 		if(PickUpDateTime.hour == 7 or PickUpDateTime.hour == 8 or PickUpDateTime.hour == 9 or PickUpDateTime.hour == 18
 		or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22 or PickUpDateTime.hour == 23):
 			return 1
 		else:
 			return 0
-	elif( PickUpDateTime.weekday() == 6 ):
+	elif( PickUpDateTime.weekday() == 5 ):
 		if(PickUpDateTime.hour == 18 or PickUpDateTime.hour == 19 or PickUpDateTime.hour == 20 or PickUpDateTime.hour == 22
 		or PickUpDateTime.hour == 23 or PickUpDateTime.hour == 0 or PickUpDateTime.hour == 1 ):
 			return 1
@@ -213,63 +213,22 @@ def RushHour( PickUpDateTime ):
 			return 0
 	
 def CountSpeedOfEachDayAndHour( a ):
-	pickup_datetime=[]
-	
 	# speed of each day and hour
-	monday=[0 for i in range(0,24)]
-	tuesday=[0 for i in range(0,24)]
-	wednesday=[0 for i in range(0,24)]
-	thursday=[0 for i in range(0,24)]
-	friday=[0 for i in range(0,24)]
-	saturday=[0 for i in range(0,24)]
-	sunday=[0 for i in range(0,24)]
+	speed=[[0.0 for i in range(0,24)] for i in range(0,7)]
 	# event number of each day and hour
 	counter=[[0 for i in range(0,24)] for i in range(0,7)]
+	returnlist=[[0.0 for i in range(0,24)] for i in range(0,7)]
 	
 	for cnt in range(1,len(a)):
-		pickup_datetime.append( a[cnt][getColByName('pickup_datetime',a[0])] )
 		# convert to datetime format
 		PickUpDateTime = computeDatetime(a[cnt][getColByName('pickup_datetime',a[0])])
 		
-		if(PickUpDateTime.weekday() == 1):
-			monday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[0][PickUpDateTime.hour]+=1
-		elif(PickUpDateTime.weekday() == 2):
-			tuesday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[1][PickUpDateTime.hour]+=1
-		elif(PickUpDateTime.weekday() == 3):
-			wednesday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[2][PickUpDateTime.hour]+=1
-		elif(PickUpDateTime.weekday() == 4):
-			thursday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[3][PickUpDateTime.hour]+=1
-		elif(PickUpDateTime.weekday() == 5):
-			friday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[4][PickUpDateTime.hour]+=1
-		elif(PickUpDateTime.weekday() == 6):
-			saturday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[5][PickUpDateTime.hour]+=1
-		else:
-			sunday[PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
-			counter[6][PickUpDateTime.hour]+=1
+		speed[PickUpDateTime.weekday()][PickUpDateTime.hour]+= float(a[cnt][getColByName('speed',a[0])])
+		counter[PickUpDateTime.weekday()][PickUpDateTime.hour]+=1
+
 	# print average speed of each day and hour
-	for cnt in range(0,24):
-		print(str(monday[cnt]/counter[0][cnt]),end=',')
-	print('\n')
-	for cnt in range(0,24):
-		print(str(tuesday[cnt]/counter[0][cnt]),end=',')
-	print('\n')
-	for cnt in range(0,24):
-		print(str(wednesday[cnt]/counter[0][cnt]),end=',')
-	print('\n')
-	for cnt in range(0,24):
-		print(str(thursday[cnt]/counter[0][cnt]),end=',')
-	print('\n')
-	for cnt in range(0,24):
-		print(str(friday[cnt]/counter[0][cnt]),end=',')
-	print('\n')
-	for cnt in range(0,24):
-		print(str(saturday[cnt]/counter[0][cnt]),end=',')
-	print('\n')
-	for cnt in range(0,24):
-		print(str(sunday[cnt]/counter[0][cnt]),end=',')
+	for day in range(0,7):
+		for hour in range(0,24):
+			returnlist[day][hour]=(speed[day][hour]/counter[day][hour])
+	print(returnlist)
+	return returnlist
