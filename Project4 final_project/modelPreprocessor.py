@@ -1,7 +1,7 @@
 import sys
 sys.path.append("./")
 from function_def import *
-
+from evalution import *
 if __name__ == "__main__" :
 	# timer start
 	tStart = time.time()
@@ -22,7 +22,7 @@ if __name__ == "__main__" :
 	inputList[0].append('airport_indicator')
 	inputList[0].append('rushhour')
 	inputList[0].append('guesstime')
-	inputList[0].append('weekday')
+	#inputList[0].append('weekday')
 	
 	avg_speed_of_all = [[16.5364754,17.2160745,17.2594283,17.98241077,21.20441525,20.97274278,15.56577927,11.36656457,8.953167491,8.610826476,8.623342556,8.5922236,8.77922379,8.970203423,9.005992647,8.905255424,9.45198565,9.239495406,9.380169564,10.76366786,12.05836378,12.40554834,12.86069166,14.30677838],
 	[18.00330679,19.62520172,20.91237372,22.55554687,22.85064967,19.75957496,16.17983866,11.70393332,9.303383749,8.64818806,8.945362116,8.595102549,8.995294289,8.971067797,8.812355907,8.558920471,9.090270913,8.774407165,8.813175484,10.60189026,12.1681334,12.81569537,13.26016697,15.11602736],
@@ -32,7 +32,31 @@ if __name__ == "__main__" :
 	[32.12381846,52.73707669,76.11932585,97.0564736,62.76699507,18.56190555,8.150733508,5.560840668,6.221834269,8.627394755,12.52747096,12.87834344,12.84730567,12.41982966,11.5280143,11.4751,12.56600642,11.14700612,9.372881735,9.354139487,9.392593177,9.639639515,10.36995485,12.12849],
 	[17.22619307,17.82360247,19.00408943,21.77062729,26.13012598,21.93470461,15.4673505,10.66591044,9.047441778,8.977712185,9.233097777,9.248718271,9.433182105,9.774605861,9.834280157,10.1050188,10.80030008,10.05306013,9.996190209,10.96216351,11.7634136,11.86554544,11.60109964,12.50492135]]
 
-	
+	avg_speed_of_airport = [0,0,0,0]
+	n_list = [0,0,0,0]
+	for row in inputList[1:]:
+		pickup_longitude = float(row[ getColByName('pickup_longitude',inputList[0]) ])
+		pickup_latitude = float(row[ getColByName('pickup_latitude',inputList[0]) ])
+		dropoff_longitude = float(row[ getColByName('dropoff_longitude',inputList[0]) ])
+		dropoff_latitude = float(row[ getColByName('dropoff_latitude',inputList[0]) ])
+		PickUpDateTime = computeDatetime(row[ getColByName('pickup_datetime',inputList[0]) ])
+		distance = float(row[ getColByName('distance',inputList[0]) ])
+		airport= str(roundTripAirport( pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude) )
+		if airport == "interTrip_between_two_airport":
+			avg_speed_of_airport[0] += float(row[ getColByName('speed',inputList[0]) ])
+			n_list[0] += 1
+		elif airport == "pickup_in_an_airport":
+			avg_speed_of_airport[1] += float(row[ getColByName('speed',inputList[0]) ])
+			n_list[1] += 1
+		elif airport == "dropoff_in_an_airport":
+			avg_speed_of_airport[2] += float(row[ getColByName('speed',inputList[0]) ])
+			n_list[2] += 1
+		elif airport == "interTrip_in_an_airport":
+			avg_speed_of_airport[3] += float(row[ getColByName('speed',inputList[0]) ])
+			n_list[3] += 1
+	for i in range(4):
+		avg_speed_of_airport[i] = avg_speed_of_airport[i]/n_list[i]
+
 	# fill the value of new columns
 	for row in inputList[1:]:
 		weekday = [0 for i in range(0,7)]
@@ -46,6 +70,7 @@ if __name__ == "__main__" :
 		PickUpDateTime = computeDatetime(row[ getColByName('pickup_datetime',inputList[0]) ])
 		distance = float(row[ getColByName('distance',inputList[0]) ])
 		
+
 		#if(str(roundTripAirport( pickup_latitude, pickup_longitude, dropoff_latitude, dropoff_longitude) ) != "in_downtown"):
 		if(str(roundTripAirport( pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude) ) != "in_downtown"):
 			airport_indicator = 1
@@ -54,13 +79,25 @@ if __name__ == "__main__" :
 		
 		if( RushHour(PickUpDateTime) == 1 ):
 			rushhour = 1
-		
+
+		airport= str(roundTripAirport( pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude) )
+		"""
+		if airport == "interTrip_between_two_airport":
+			guesstime = distance/avg_speed_of_airport[0] *3600
+		elif airport == "pickup_in_an_airport":
+			guesstime = distance/avg_speed_of_airport[1] *3600
+		elif airport == "dropoff_in_an_airport":
+			guesstime = distance/avg_speed_of_airport[2] *3600
+		elif airport == "interTrip_in_an_airport":
+			guesstime = distance/avg_speed_of_airport[3] *3600
+		else:
+			guesstime = (distance/float(avg_speed_of_all[PickUpDateTime.weekday()-1][PickUpDateTime.hour]))*3600
+		"""
 		guesstime = (distance/float(avg_speed_of_all[PickUpDateTime.weekday()-1][PickUpDateTime.hour]))*3600
-		
 		row.append(airport_indicator)
 		row.append(rushhour)
 		row.append(guesstime)
-		row.append(weekday)
+		#row.append(weekday)
 
 	writefile( inputList, output_fileName )
 
@@ -69,3 +106,6 @@ if __name__ == "__main__" :
 
 	# print execution time
 	print("Execution time: ", tEnd - tStart)
+
+	print("\n\n")
+	evalutaion(output_fileName)
