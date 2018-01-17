@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 from math import sin, asin, cos, radians, fabs, sqrt , ceil, floor
 import numpy as np
 
+def readDf( fileName ):
+	with open( fileName , 'r') as reader:
+		df = pd.read_csv( fileName , delimiter = ',')
+		return df
+		
 def readfile(filename) :
 	inputFile1 = str(filename)
 	dataReadIn1 = []
