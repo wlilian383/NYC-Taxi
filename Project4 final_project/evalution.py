@@ -2,11 +2,6 @@ from function_def import *
 import math
 import pandas as pd
 
-def readDf( fileName ):
-	with open( fileName , 'r') as reader:
-		df = pd.read_csv( fileName , delimiter = ',')
-		return df
-
 if __name__ == "__main__" :
 	if len(sys.argv)!=2:
 		print("Useage error: [evalutaion output]")
