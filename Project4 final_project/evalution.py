@@ -1,16 +1,16 @@
 from function_def import *
 import math
-import pandas as pd
 
-if __name__ == "__main__" :
-	if len(sys.argv)!=2:
-		print("Useage error: [evalutaion output]")
-		sys.exit()
+
+def evalutaion( filename ):
+	#if len(sys.argv)!=2:
+	#	print("Useage error: [evalutaion output]")
+	#	sys.exit()
 
 	# timer start
 	tStart = time.time()
 
-	df = readDf( sys.argv[1] )
+	df = readDf( filename )
 	errorSum = 0.0
 	RSMLE = 0.0
 	n = len(df)
